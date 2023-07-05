@@ -4,6 +4,10 @@
 #include<iostream>
 int main(int argc, char *argv[])
 {
+
+
+
+	//123123123123
     QApplication a(argc, argv);
     Widget w;
         //123123
