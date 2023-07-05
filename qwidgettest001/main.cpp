@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
 {
 
 
-
+//666
 	//123123123123
     QApplication a(argc, argv);
     Widget w;
