@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     Widget w;
-
+        //123123
 
 //    w.move(1200,800);
 //    w.resize(800,600);
