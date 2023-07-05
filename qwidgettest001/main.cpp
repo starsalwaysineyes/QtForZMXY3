@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 
     w.show();
 
-
+//tt
     //std::cout<<"123"<<std::endl;
     return a.exec();
 }
