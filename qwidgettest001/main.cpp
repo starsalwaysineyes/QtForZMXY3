@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
 //    //同时设置窗口的位置和大小
 //    w.setGeometry(1200,800,2000,1600);
 
-
+///123
     w.show();
 
 //tt
