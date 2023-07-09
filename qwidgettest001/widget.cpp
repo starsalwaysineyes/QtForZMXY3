@@ -1,19 +1,21 @@
 #include "widget.h"
 #include "ui_widget.h"
-
+#include"mybox.h"
+#include"mypushbutton.h"
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
 {
+    cntBtns=0;//暂时无用
+    cntBoxes=0;
+
+
     setFixedSize(800,800);
+    btn1.setParent(this);
+    //box1.setParent(this);
 
-
-    button1.setParent(this);//绑定窗口和按钮
-    button1.setText("Close");//按钮框中文本
-
-    button2.setText("Box");
-    button2.setParent(this);
-
+    btn1.setText("AddBox");//按钮框中文本
+    //box1.setText("Box");
 
 
     x1=100;
@@ -22,14 +24,14 @@ Widget::Widget(QWidget *parent)
     x2=300;
     y2=300;
 
-    button1.move(100,100);//定义按钮的位置
-    button1.resize(100,100);
+    btn1.move(100,100);//定义按钮的位置
+    btn1.resize(100,100);
 
-    button2.move(300,300);//定义按钮的位置
-    button2.resize(100,100);
+    //box1.move(300,300);//定义按钮的位置
+    //box1.resize(100,100);
 
-
-    connect(&button1,&QPushButton::pressed,this,&Widget::close);
+    connect(&btn1,&MyPushButton::pressed,this,&Widget::AddMyBox);
+    //将btn1的被按下这个事件与addmybox函数关联
 
     ui->setupUi(this);
 }
@@ -41,13 +43,13 @@ Widget::~Widget()
 
 
 void Widget::moving()
-{
-    button1.move(400,400);
-
+{//无用
+    btn1.move(400,400);
 }
 
 void Widget::movea()
-{
+{//四个主要移动事件
+
     if(x1>=100)
         x1-=100;
     else
@@ -58,9 +60,9 @@ void Widget::movea()
         if(x2<0)
             x2=700;
     }
-
-    button2.move(x2,y2);
-    button1.move(x1,y1);
+    if(cntBoxes>=1)
+        boxes[0]->move(x2,y2);
+    btn1.move(x1,y1);
 }
 void Widget::moves()
 {
@@ -75,8 +77,9 @@ void Widget::moves()
             y2=0;
     }
 
-    button2.move(x2,y2);
-    button1.move(x1,y1);
+    if(cntBoxes>=1)
+        boxes[0]->move(x2,y2);
+    btn1.move(x1,y1);
 }
 void Widget::movew()
 {
@@ -91,8 +94,9 @@ void Widget::movew()
             y2=700;
     }
 
-    button2.move(x2,y2);
-    button1.move(x1,y1);
+    if(cntBoxes>=1)
+        boxes[0]->move(x2,y2);
+    btn1.move(x1,y1);
 }
 void Widget::moved()
 {
@@ -107,12 +111,13 @@ void Widget::moved()
             x2=0;
     }
 
-    button2.move(x2,y2);
-    button1.move(x1,y1);
+    if(cntBoxes>=1)
+        boxes[0]->move(x2,y2);
+    btn1.move(x1,y1);
 }
 
 void Widget::keyPressEvent(QKeyEvent *event)
-{
+{//设置窗口内的键盘事件
     switch(event->key())
     {
         case Qt::Key_A :
@@ -127,8 +132,22 @@ void Widget::keyPressEvent(QKeyEvent *event)
         case Qt::Key_D:
             moved();
             break;
-
     };
 }
+
+void Widget::AddMyBox()
+{
+    //boxes[0]=new MyBox(this);
+    boxes[cntBoxes]=new MyBox(this);
+    x2=100;
+    y2=100;
+    boxes[cntBoxes]->resize(100,100);
+    boxes[cntBoxes]->move(100,100);
+    boxes[cntBoxes]->setParent(this);
+    boxes[cntBoxes]->show();
+    cntBoxes++;
+}
+
+
 
 
