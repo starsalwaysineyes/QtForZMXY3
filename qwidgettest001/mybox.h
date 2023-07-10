@@ -8,10 +8,9 @@ class MyBox : public QPushButton
     Q_OBJECT
 public:
     explicit MyBox(QWidget *parent = nullptr);
-    MyBox(int x,int y,QWidget *parent=nullptr);// 暂时没什么用
 
 private:
-    int x,y;
+    //int x,y;
 signals:
 
 };

@@ -7,6 +7,10 @@
 #include<QDebug>
 #include<mybox.h>
 #include<mypushbutton.h>
+#include<QMap>
+#include<QPair>
+
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
 QT_END_NAMESPACE
@@ -19,11 +23,8 @@ public:
     Widget(QWidget *parent = nullptr);
     ~Widget();
 
-    void moving();
-    void movea();
-    void moves();
-    void movew();
-    void moved();
+    void movea(char c);
+
     void keyPressEvent(QKeyEvent* event);
     void AddMyBox();
 
@@ -31,13 +32,22 @@ public:
 
 private:
     Ui::Widget *ui;
-
+    //初始坐标
     int x1,y1,x2,y2;
+
+    //二维数组
+    int arr[8][8];
+
+    //btn1
     MyPushButton btn1;
-    //MyBox box1;
-    int cntBtns;
+
+    //map字典对，key为char，value为pair
+    QMap<char,QPair<int,int>> mp;
+
+    //box的数量
     int cntBoxes;
-    MyPushButton *btns[16];
+
+    //初始化16个指向box的指针
     MyBox *boxes[16];
 
 

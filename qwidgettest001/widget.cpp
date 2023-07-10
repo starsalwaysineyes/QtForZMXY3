@@ -2,36 +2,49 @@
 #include "ui_widget.h"
 #include"mybox.h"
 #include"mypushbutton.h"
+#include<QString>
+#include<QVector>
+#include<QPair>
+
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
 {
-    cntBtns=0;//暂时无用
+    mp['A']=qMakePair(-1,0);
+    mp['S']=qMakePair(0,1);
+    mp['W']=qMakePair(0,-1);
+    mp['D']=qMakePair(1,0);
+
+    //初始化arr数组
+    memset(arr,0,sizeof(arr));
+
+    //初始化box的个数
     cntBoxes=0;
 
-
+    //设置主窗口大小固定位800*800
     setFixedSize(800,800);
+
+    //设置按钮的父窗口位当前widget
     btn1.setParent(this);
-    //box1.setParent(this);
 
-    btn1.setText("AddBox");//按钮框中文本
-    //box1.setText("Box");
+    //设置按钮框中文本
+    btn1.setText("AddBox");
 
-
+    //初始化btn1的位置
     x1=100;
     y1=100;
 
-    x2=300;
-    y2=300;
+    //标记1,1处为btn1,用-1标记
+    arr[1][1]=-1;
 
-    btn1.move(100,100);//定义按钮的位置
+    //定义按钮的位置
+    btn1.move(x1,y1);
+
+    //设置btn1的大小为100*100
     btn1.resize(100,100);
 
-    //box1.move(300,300);//定义按钮的位置
-    //box1.resize(100,100);
-
-    connect(&btn1,&MyPushButton::pressed,this,&Widget::AddMyBox);
     //将btn1的被按下这个事件与addmybox函数关联
+    connect(&btn1,&MyPushButton::pressed,this,&Widget::AddMyBox);
 
     ui->setupUi(this);
 }
@@ -42,78 +55,33 @@ Widget::~Widget()
 }
 
 
-void Widget::moving()
-{//无用
-    btn1.move(400,400);
-}
-
-void Widget::movea()
+void Widget::movea(char c)
 {//四个主要移动事件
 
-    if(x1>=100)
-        x1-=100;
-    else
-        x1=700;
-    if(y1==y2 && x1==x2)
-    {
-        x2-=100;
-        if(x2<0)
-            x2=700;
-    }
-    if(cntBoxes>=1)
-        boxes[0]->move(x2,y2);
-    btn1.move(x1,y1);
-}
-void Widget::moves()
-{
-    if(y1<700)
-        y1+=100;
-    else
-        y1=0;
-    if(y1==y2 && x1==x2)
-    {
-        y2+=100;
-        if(y2>700)
-            y2=0;
+    if(arr[(8+x1/100+mp[c].first)%8][(8+y1/100+mp[c].second)%8]==0)
+    {//无阻碍
+        btn1.move((8+x1/100+mp[c].first)%8*100,(8+y1/100+mp[c].second)%8*100);
+        arr[(8+x1/100+mp[c].first)%8][(8+y1/100+mp[c].second)%8]=-1;
+        arr[x1/100][y1/100]=0;
+        x1=(8+x1/100+mp[c].first)%8*100;
+        y1=(8+y1/100+mp[c].second)%8*100;
+        return;
     }
 
-    if(cntBoxes>=1)
-        boxes[0]->move(x2,y2);
-    btn1.move(x1,y1);
-}
-void Widget::movew()
-{
-    if(y1>=100)
-        y1-=100;
-    else
-        y1=700;
-    if(y1==y2 && x1==x2)
-    {
-        y2-=100;
-        if(y2<0)
-            y2=700;
+    if(arr[(8+x1/100+2*mp[c].first)%8][(8+y1/100+2*mp[c].second)%8]==0)
+    {//单个，可推
+        boxes[arr[(8+x1/100+mp[c].first)%8][(8+y1/100+mp[c].second)%8]-1]\
+                ->move((8+x1/100+2*mp[c].first)%8*100,(8+y1/100+2*mp[c].second)%8*100);
+        btn1.move((8+x1/100+mp[c].first)%8*100,(8+y1/100+mp[c].second)%8*100);
+        arr[(8+x1/100+2*mp[c].first)%8][(8+y1/100+2*mp[c].second)%8]=\
+                arr[(8+x1/100+mp[c].first)%8][(8+y1/100+mp[c].second)%8];
+        arr[(8+x1/100+mp[c].first)%8][(8+y1/100+mp[c].second)%8]=-1;
+        arr[x1/100][y1/100]=0;
+        x1=(8+x1/100+mp[c].first)%8*100;
+        y1=(8+y1/100+mp[c].second)%8*100;
+        return;
     }
 
-    if(cntBoxes>=1)
-        boxes[0]->move(x2,y2);
-    btn1.move(x1,y1);
-}
-void Widget::moved()
-{
-    if(x1<700)
-        x1+=100;
-    else
-        x1=0;
-    if(y1==y2 && x1==x2)
-    {
-        x2+=100;
-        if(x2>700)
-            x2=0;
-    }
-
-    if(cntBoxes>=1)
-        boxes[0]->move(x2,y2);
-    btn1.move(x1,y1);
 }
 
 void Widget::keyPressEvent(QKeyEvent *event)
@@ -121,31 +89,54 @@ void Widget::keyPressEvent(QKeyEvent *event)
     switch(event->key())
     {
         case Qt::Key_A :
-            movea();
+            movea('A');
             break;
         case Qt::Key_S:
-            moves();
+            movea('S');
             break;
         case Qt::Key_W:
-            movew();
+            movea('W');
             break;
         case Qt::Key_D:
-            moved();
+            movea('D');
             break;
     };
 }
 
 void Widget::AddMyBox()
 {
-    //boxes[0]=new MyBox(this);
-    boxes[cntBoxes]=new MyBox(this);
-    x2=100;
-    y2=100;
-    boxes[cntBoxes]->resize(100,100);
-    boxes[cntBoxes]->move(100,100);
-    boxes[cntBoxes]->setParent(this);
-    boxes[cntBoxes]->show();
-    cntBoxes++;
+    if(cntBoxes==16)return;
+    //此处在构造函数中已经设定了大小和父窗口为this
+
+    char c[4]={'D','S','A','W'};
+
+    //设置box名字的前缀,这里当cnt为0时，编号为1
+    QString name="Box-";
+    name+=char((cntBoxes+1)/10+'0');
+    name+=char((cntBoxes+1)%10+'0');
+
+    for(int i=0;i<4;i++)
+    {//遍历“右下左上”四个反向，判断是否有空位
+        if(arr[(8+x1/100+mp[c[i]].first)%8][(8+y1/100+mp[c[i]].second)%8]==0)//没有方块阻挡
+        {
+            //实例化box
+            boxes[cntBoxes]=new MyBox(this);
+            //为box设置名字
+            boxes[cntBoxes]->setText(name);
+
+            //将box移动到指定位置
+            boxes[cntBoxes]->move((8+x1/100+mp[c[i]].first)%8*100,(8+y1/100+mp[c[i]].second)%8*100);
+
+            //记录该box的编号到arr中
+            arr[(8+x1/100+mp[c[i]].first)%8][(8+y1/100+mp[c[i]].second)%8]=cntBoxes+1;
+
+            //将box设置为可见
+            boxes[cntBoxes]->show();
+
+            cntBoxes++;
+            break;
+        }
+    }
 }
 
 
